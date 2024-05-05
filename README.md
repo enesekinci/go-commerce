@@ -1,4 +1,4 @@
-# Example SMS Restful API
+# Go Commerce API
 
 ## Response Codes
 
@@ -15,32 +15,34 @@
 
 ## Response Structure
 
--   Success ResponseP
+- Success ResponseP
 
 ```json
 {
-    "status": true,
-    "data": {
-        "id": 1,
-        "name": "John Doe",
-        "email": "",
-        "phone": ""
-    }
+  "status": "success",
+  "message": "Success Message",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "",
+    "phone": ""
+  }
 }
 ```
 
--   Error Response
+- Error Response
 
 ```json
 {
-    "status": false,
-    "error": {
-        "code": 400
-    }
+  "status": "error",
+  "message": "Error Message",
+  "error": {
+    "code": 400
+  }
 }
 ```
 
-### Respose Message Codes
+### Respose Message Codes (http://localhost:3000/api/error-messages)
 
 | Code | Description                               |
 |------|-------------------------------------------|
@@ -53,22 +55,36 @@
 
 ### Authentication Endpoints
 
-| Method | Endpoint                                    | Description               |
-|--------|---------------------------------------------|---------------------------|
-| POST   | `/api/v1/auth/token/generate/refresh-token` | Generate a refresh token. |
-| POST   | `/api/v1/auth/token/generate/token`         | Generate an access token. |
-| POST   | `/api/v1/auth/register`                     | Register a new user.      |
+| Method | Endpoint                  | Description                |
+|--------|---------------------------|----------------------------|
+| POST   | `/api/auth/register`      | Register a new user.       |
+| POST   | `/api/auth/token/refresh` | Generate a refresh token.  |
+| POST   | `/api/auth/token/access`  | Generate an access token.  |
+| POST   | `/api/password/forgot`    | Send password reset email. |
+| POST   | `/api/password/change`    | Change user password.      |
+| POST   | `/api/profile/update`     | Update user profile.       |
 
-### SMS Endpoints
+### User Endpoints
 
-| Method | Endpoint                   | Description                             |
-|--------|----------------------------|-----------------------------------------|
-| POST   | `/api/v1/sms/send`         | Send an SMS.                            |
-| GET    | `/api/v1/sms/report`       | Get SMS delivery reports.               |
-| GET    | `/api/v1/sms/report/{sms}` | Get detailed report for a specific SMS. |
+| Method | Endpoint                     | Description                 |
+|--------|------------------------------|-----------------------------|
+| POST   | `/api/user/:id`              | Get user by ID.             |
+| POST   | `/api/user/create`           | Create a new user.          |
+| POST   | `/api/user/update/:id`       | Update user by ID.          |
+| GET    | `/api/user/delete/:id`       | Delete user by ID.          |
+| GET    | `/api/user/delete/admin/:id` | Delete user by ID as admin. |
 
-## Dependencies
+## Core Endpoints
 
-| Package Name | Description      |
-|--------------|------------------|
-| JWT Auth     | firebase/php-jwt |
+| Method | Endpoint                 | Description                |
+|--------|--------------------------|----------------------------|
+| POST   | `/api/user/:id`          | Get user by ID.            |
+| GET    | `/api/error-messages`    | Get error message codes.   |
+| GET    | `/api/constant`          | Get constant values.       |
+| GET    | `/api/province`          | Get all provinces.         |
+| GET    | `/api/city/:province_id` | Get cities by province ID. |
+| GET    | `/api/district/:city_id` | Get districts by city ID.  |
+| GET    | `/api/currency`          | Get all currencies.        |
+
+
+
