@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"go-commerce/app/models"
 	"go-commerce/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -34,19 +35,21 @@ func ConnectDB() {
 
 	fmt.Println("Connection Opened to Database")
 
-	/*
-		DropTables(DB)
+	DropTables(DB)
 
-		err = DB.AutoMigrate(
-			&models.User{},
-		)
+	err = DB.AutoMigrate(
+		&models.User{},
+		&models.Role{},
+		&models.Category{},
+		&models.Brand{},
+	)
 
-		if err != nil {
-			return
-		}
+	if err != nil {
+		return
+	}
 
-		SeedData(DB)
+	SeedData(DB)
 
-		fmt.Println("Database Migrated")
-	*/
+	fmt.Println("Database Migrated")
+
 }

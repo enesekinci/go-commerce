@@ -1,6 +1,5 @@
 E-commerce TodoList
 
-
 # Attribute
 - [] List
 - [] Create
@@ -32,6 +31,8 @@ E-commerce TodoList
 - [] Create
 - [] Update
 - [] Delete
+- Fields:
+    Name
 
 
 # Product
