@@ -1,15 +1,5 @@
 E-commerce TodoList
 
-# Attribute
-- [] List
-- [] Create
-- [] Update
-- [] Delete
-- Fields:
-    Name,Filterable,Values
-- Relations:
-    Categories
-
 # Variant
 - [] List
 - [] Create
@@ -25,15 +15,6 @@ E-commerce TodoList
 - [] Delete
 - Fields:
     Name,Type (Field,Textarea,Dropdown,Checkbox,Radio,Multiselect,Date,DateTime,Time),Required,Values
-
-# Tag
-- [] List
-- [] Create
-- [] Update
-- [] Delete
-- Fields:
-    Name
-
 
 # Product
 - [] List
