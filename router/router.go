@@ -21,6 +21,8 @@ func SetupRoutes(app *fiber.App) {
 	coreRoutes(api)
 
 	categoryRoutes(api)
+
+	brandRoutes(api)
 }
 
 func authRoutes(api fiber.Router) {
@@ -59,4 +61,13 @@ func categoryRoutes(api fiber.Router) {
 	category.Post("/create", middleware.VerifyAccessToken(), handler.CreateCategory)
 	category.Post("/update/:id", middleware.VerifyAccessToken(), handler.UpdateCategory)
 	category.Get("/delete/:id", middleware.VerifyAccessToken(), handler.DeleteCategory)
+}
+
+func brandRoutes(api fiber.Router) {
+	brand := api.Group("/brand")
+	brand.Get("/", handler.GetBrands)
+	brand.Get("/:id", handler.GetBrand)
+	brand.Post("/create", middleware.VerifyAccessToken(), handler.CreateBrand)
+	brand.Post("/update/:id", middleware.VerifyAccessToken(), handler.UpdateBrand)
+	brand.Get("/delete/:id", middleware.VerifyAccessToken(), handler.DeleteBrand)
 }

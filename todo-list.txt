@@ -1,20 +1,5 @@
 E-commerce TodoList
 
-# Category
-- [] List
-- [] Create
-- [] Update
-- [] Delete
-- Fields:
-    Name,Description,Parent,Seo Url,Seo Meta Title,Seo Meta Description,Searchable,Status,Logo,Banner
-
-# Brand
-- [] List
-- [] Create
-- [] Update
-- [] Delete
-- Fields:
-    Name,Description,Seo Url,Seo Meta Title,Seo Meta Description,Status,Logo,Banner
 
 # Attribute
 - [] List

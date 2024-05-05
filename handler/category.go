@@ -25,7 +25,7 @@ func GetCategories(c *fiber.Ctx) error {
 
 	database.DB.Find(&categories)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Categories found", "data": categories})
+	return c.JSON(fiber.Map{"status": "success", "message": "Categories found", "categories": categories})
 }
 
 func GetCategory(c *fiber.Ctx) error {
@@ -40,7 +40,7 @@ func GetCategory(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No category found with ID", "data": nil})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Category found", "data": category})
+	return c.JSON(fiber.Map{"status": "success", "message": "Category found", "category": category})
 }
 
 func CreateCategory(c *fiber.Ctx) error {
@@ -60,7 +60,7 @@ func CreateCategory(c *fiber.Ctx) error {
 
 	database.DB.Create(&category)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Category created", "data": category})
+	return c.JSON(fiber.Map{"status": "success", "message": "Category created", "category": category})
 }
 
 func UpdateCategory(c *fiber.Ctx) error {
@@ -98,7 +98,7 @@ func UpdateCategory(c *fiber.Ctx) error {
 
 	database.DB.Save(&category)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Category updated", "data": category})
+	return c.JSON(fiber.Map{"status": "success", "message": "Category updated", "category": category})
 }
 
 func DeleteCategory(c *fiber.Ctx) error {

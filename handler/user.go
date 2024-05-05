@@ -75,7 +75,7 @@ func CreateUser(c *fiber.Ctx) error {
 
 	database.DB.Create(&user)
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"status": "success", "message": "User successfully created", "data": resource.NewUserResource(user)})
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"status": "success", "message": "User successfully created", "user": resource.NewUserResource(user)})
 }
 
 func UpdateUser(c *fiber.Ctx) error {
@@ -105,7 +105,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	user.Name = input.Name
 	database.DB.Save(&user)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "User successfully updated", "data": resource.NewUserResource(&user)})
+	return c.JSON(fiber.Map{"status": "success", "message": "User successfully updated", "user": resource.NewUserResource(&user)})
 }
 
 func DeleteUserYourself(c *fiber.Ctx) error {
