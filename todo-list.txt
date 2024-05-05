@@ -1,18 +1,5 @@
 E-commerce TodoList
 
-# Auth
-- [] Register
-- [] Login
-- [] Forgot Password
-- [] Reset Password
-- [] Email Verification
-
-# User
-- [] Profile
-- [] Update Profile
-- [] Change Password
-- [] Delete Account
-
 # Category
 - [] List
 - [] Create
