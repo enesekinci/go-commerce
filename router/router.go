@@ -19,6 +19,8 @@ func SetupRoutes(app *fiber.App) {
 	userRoutes(api)
 
 	coreRoutes(api)
+
+	categoryRoutes(api)
 }
 
 func authRoutes(api fiber.Router) {
@@ -48,4 +50,13 @@ func coreRoutes(api fiber.Router) {
 	api.Get("/city/:province_id", handler.City)
 	api.Get("/district/:city_id", handler.District)
 	api.Get("/currency", handler.Currency)
+}
+
+func categoryRoutes(api fiber.Router) {
+	category := api.Group("/category")
+	category.Get("/", handler.GetCategories)
+	category.Get("/:id", handler.GetCategory)
+	category.Post("/create", middleware.VerifyAccessToken(), handler.CreateCategory)
+	category.Post("/update/:id", middleware.VerifyAccessToken(), handler.UpdateCategory)
+	category.Get("/delete/:id", middleware.VerifyAccessToken(), handler.DeleteCategory)
 }
