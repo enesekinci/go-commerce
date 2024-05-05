@@ -15,7 +15,7 @@
 
 ## Response Structure
 
-- Success ResponseP
+- Success Response
 
 ```json
 {
