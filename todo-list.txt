@@ -1,0 +1,75 @@
+E-commerce TodoList
+
+# Auth
+- [] Register
+- [] Login
+- [] Forgot Password
+- [] Reset Password
+- [] Email Verification
+
+# User
+- [] Profile
+- [] Update Profile
+- [] Change Password
+- [] Delete Account
+
+# Category
+- [] List
+- [] Create
+- [] Update
+- [] Delete
+- Fields:
+    Name,Description,Parent,Seo Url,Seo Meta Title,Seo Meta Description,Searchable,Status,Logo,Banner
+
+# Brand
+- [] List
+- [] Create
+- [] Update
+- [] Delete
+- Fields:
+    Name,Description,Seo Url,Seo Meta Title,Seo Meta Description,Status,Logo,Banner
+
+# Attribute
+- [] List
+- [] Create
+- [] Update
+- [] Delete
+- Fields:
+    Name,Filterable,Values
+- Relations:
+    Categories
+
+# Variant
+- [] List
+- [] Create
+- [] Update
+- [] Delete
+- Fields:
+    Name,Type (Text,Color,Image),Values
+
+# Option
+- [] List
+- [] Create
+- [] Update
+- [] Delete
+- Fields:
+    Name,Type (Field,Textarea,Dropdown,Checkbox,Radio,Multiselect,Date,DateTime,Time),Required,Values
+
+# Tag
+- [] List
+- [] Create
+- [] Update
+- [] Delete
+
+
+# Product
+- [] List
+- [] Detail
+- [] Create
+- [] Update
+- [] Delete
+- [] Search
+- Fields:
+    Name,Short Description,Description,IsVirtual,Status,Price,Special Price,Special Price Type,Special Price StartSpecial Price End,SKU,Inventory Management,Stock Availability,Seo Url,Seo Meta Title,Seo Meta Description,
+- Relations:
+    Brand,Categories,Tax,Attributes,Variants (Options),Tags,Medias
