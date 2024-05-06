@@ -7,10 +7,10 @@ import (
 
 type Attribute struct {
 	gorm.Model
-	Name       string `gorm:"not null" json:"name"`
-	Filterable uint   `gorm:"default:0" json:"filterable"`
-	Values     datatypes.JSON
-	Categories []Category `gorm:"many2many:attribute_categories;" json:"categories"`
+	Name       string         `gorm:"not null" json:"name"`
+	Filterable uint           `gorm:"default:0" json:"filterable"`
+	Values     datatypes.JSON `gorm:"type:json" json:"values"`
+	Categories []Category     `gorm:"many2many:attribute_categories;" json:"categories"`
 }
 
 type AttributeCategory struct {

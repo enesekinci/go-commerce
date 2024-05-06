@@ -1,29 +1,2 @@
 E-commerce TodoList
 
-# Variant
-- [] List
-- [] Create
-- [] Update
-- [] Delete
-- Fields:
-    Name,Type (Text,Color,Image),Values
-
-# Option
-- [] List
-- [] Create
-- [] Update
-- [] Delete
-- Fields:
-    Name,Type (Field,Textarea,Dropdown,Checkbox,Radio,Multiselect,Date,DateTime,Time),Required,Values
-
-# Product
-- [] List
-- [] Detail
-- [] Create
-- [] Update
-- [] Delete
-- [] Search
-- Fields:
-    Name,Short Description,Description,IsVirtual,Status,Price,Special Price,Special Price Type,Special Price StartSpecial Price End,SKU,Inventory Management,Stock Availability,Seo Url,Seo Meta Title,Seo Meta Description,
-- Relations:
-    Brand,Categories,Tax,Attributes,Variants (Options),Tags,Medias

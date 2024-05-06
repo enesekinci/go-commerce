@@ -27,6 +27,12 @@ func SetupRoutes(app *fiber.App) {
 	tagRoutes(api)
 
 	attributeRoutes(api)
+
+	variantRoutes(api)
+
+	optionRoutes(api)
+
+	productRoutes(api)
 }
 
 func authRoutes(api fiber.Router) {
@@ -89,4 +95,33 @@ func attributeRoutes(api fiber.Router) {
 	attribute.Post("/create", middleware.VerifyAccessToken(), handler.CreateAttribute)
 	attribute.Post("/update/:id", middleware.VerifyAccessToken(), handler.UpdateAttribute)
 	attribute.Get("/delete/:id", middleware.VerifyAccessToken(), handler.DeleteAttribute)
+}
+
+func variantRoutes(api fiber.Router) {
+	variant := api.Group("/variant")
+
+	variant.Get("/type", handler.GetVariantTypes)
+
+	variant.Get("/", handler.GetVariants)
+	variant.Post("/create", middleware.VerifyAccessToken(), handler.CreateVariant)
+	variant.Post("/update/:id", middleware.VerifyAccessToken(), handler.UpdateVariant)
+	variant.Get("/delete/:id", middleware.VerifyAccessToken(), handler.DeleteVariant)
+
+}
+
+func optionRoutes(api fiber.Router) {
+	option := api.Group("/option")
+	option.Get("/", handler.GetOptions)
+	option.Post("/create", middleware.VerifyAccessToken(), handler.CreateOption)
+	option.Post("/update/:id", middleware.VerifyAccessToken(), handler.UpdateOption)
+	option.Get("/delete/:id", middleware.VerifyAccessToken(), handler.DeleteOption)
+}
+
+func productRoutes(api fiber.Router) {
+	product := api.Group("/product")
+	product.Get("/", handler.GetProducts)
+	product.Get("/:id", handler.GetProduct)
+	product.Post("/create", middleware.VerifyAccessToken(), handler.CreateProduct)
+	product.Post("/update/:id", middleware.VerifyAccessToken(), handler.UpdateProduct)
+	product.Get("/delete/:id", middleware.VerifyAccessToken(), handler.DeleteProduct)
 }

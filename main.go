@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	//TODO: MODELLERIN ILISKILERI DUZENLENECEK, CASCADE VEYA SET NULL DURUMLARI AYARLANACAK
 
 	app := fiber.New(fiber.Config{
 		AppName:     "Go Commerce",
