@@ -3,15 +3,16 @@ package handler
 import (
 	"github.com/gofiber/fiber/v2"
 	"go-commerce/app/models"
+	"go-commerce/app/resource"
 	"go-commerce/core/helper"
 	"go-commerce/database"
 )
 
 type CreateCategoryInput struct {
-	Name               string `validate:"required,min=3,max=100" json:"name"`
-	Description        string `validate:"nullable" json:"description"`
-	Parent             uint   `validate:"default:0" json:"parent"`
-	SeoUrl             string `validate:"nullable" json:"seo_url"`
+	Name        string `validate:"required,min=3,max=100" json:"name"`
+	Description string `validate:"nullable" json:"description"`
+	Parent      uint   `validate:"default:0" json:"parent"`
+	//SeoUrl             string `validate:"nullable" json:"seo_url"`
 	SeoMetaTitle       string `validate:"nullable" json:"seo_meta_title"`
 	SeoMetaDescription string `validate:"nullable" json:"seo_meta_description"`
 	Searchable         int    `validate:"default:1;in=0,1" json:"searchable"`
@@ -40,7 +41,7 @@ func GetCategory(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No category found with ID", "data": nil})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Category found", "category": category})
+	return c.JSON(fiber.Map{"status": "success", "message": "Category found", "category": resource.NewCategoryResource(category)})
 }
 
 func CreateCategory(c *fiber.Ctx) error {
@@ -60,7 +61,7 @@ func CreateCategory(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Category already exist", "data": nil})
 	}
 
-	category := models.NewCategory(input.Name, input.Description, input.Parent, input.SeoUrl, input.SeoMetaTitle, input.SeoMetaDescription, input.Searchable, input.Status, input.Logo, input.Banner)
+	category := models.NewCategory(input.Name, input.Description, input.Parent, input.SeoMetaTitle, input.SeoMetaDescription, input.Searchable, input.Status, input.Logo, input.Banner)
 
 	database.DB.Create(&category)
 

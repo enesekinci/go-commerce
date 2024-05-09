@@ -54,7 +54,7 @@ func CreateBrand(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
 	}
 
-	brand := models.NewBrand(input.Name, input.Description, input.SeoUrl, input.SeoMetaTitle, input.SeoMetaDescription, input.Status, input.Logo, input.Banner)
+	brand := models.NewBrand(input.Name, input.Description, input.SeoMetaTitle, input.SeoMetaDescription, input.Status, input.Logo, input.Banner)
 
 	database.DB.Create(&brand)
 

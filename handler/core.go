@@ -2,10 +2,23 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"go-commerce/core/constant"
 )
 
 func ErrorMessage(c *fiber.Ctx) error {
-	return c.SendString("Error Messages")
+
+	var messages map[int]string
+
+	for _, message := range constant.AllErrorCodes() {
+		code := int(message)
+		messages[code] = message.String()
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":        "success",
+		"message":       "All error messages",
+		"errorMessages": allErrorMessages,
+	})
 }
 func Constant(c *fiber.Ctx) error {
 	return c.SendString("Constants")

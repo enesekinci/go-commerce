@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"go-commerce/core/helper"
+	"gorm.io/gorm"
+)
 
 type Category struct {
 	gorm.Model
@@ -16,12 +19,12 @@ type Category struct {
 	Banner             string `gorm:"nullable" json:"banner"`
 }
 
-func NewCategory(name string, description string, parent uint, seoUrl string, seoMetaTitle string, seoMetaDescription string, searchable int, status int, logo string, banner string) *Category {
+func NewCategory(name string, description string, parent uint, seoMetaTitle string, seoMetaDescription string, searchable int, status int, logo string, banner string) *Category {
 	return &Category{
 		Name:               name,
 		Description:        description,
 		Parent:             parent,
-		SeoUrl:             seoUrl,
+		SeoUrl:             helper.NewSeo(name, "categories", "seo_url"),
 		SeoMetaTitle:       seoMetaTitle,
 		SeoMetaDescription: seoMetaDescription,
 		Searchable:         searchable,
