@@ -93,7 +93,11 @@ func UpdateCategory(c *fiber.Ctx) error {
 	category.Name = input.Name
 	category.Description = input.Description
 	category.Parent = input.Parent
-	category.SeoUrl = input.SeoUrl
+
+	if input.Name != category.Name {
+		category.SeoUrl = helper.NewSeo(input.Name, "categories", "seo_url")
+	}
+
 	category.SeoMetaTitle = input.SeoMetaTitle
 	category.SeoMetaDescription = input.SeoMetaDescription
 	category.Searchable = input.Searchable
