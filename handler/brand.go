@@ -10,7 +10,6 @@ import (
 type CreateBrandInput struct {
 	Name               string `validate:"required;" json:"name"`
 	Description        string `validate:"nullable" json:"description"`
-	SeoUrl             string `validate:"nullable" json:"seo_url"`
 	SeoMetaTitle       string `validate:"nullable" json:"seo_meta_title"`
 	SeoMetaDescription string `validate:"nullable" json:"seo_meta_description"`
 	Status             uint   `validate:"default:1" json:"status"`
@@ -84,9 +83,16 @@ func UpdateBrand(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
 	}
 
+	if brand.Name != input.Name {
+		if helper.IsExistInDB("brands", "name", input.Name) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Brand already exist", "data": nil})
+		}
+
+		brand.SeoUrl = helper.NewSlug(input.Name, "brands", "seo_url")
+	}
+
 	brand.Name = input.Name
 	brand.Description = input.Description
-	brand.SeoUrl = input.SeoUrl
 	brand.SeoMetaTitle = input.SeoMetaTitle
 	brand.SeoMetaDescription = input.SeoMetaDescription
 	brand.Status = input.Status

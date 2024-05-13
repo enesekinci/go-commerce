@@ -22,7 +22,7 @@ func NewBrand(name, description, seoMetaTitle, seoMetaDescription string, status
 	return Brand{
 		Name:               name,
 		Description:        description,
-		SeoUrl:             helper.NewSeo(name, "brands", "seo_url"),
+		SeoUrl:             helper.NewSlug(name, "brands", "seo_url"),
 		SeoMetaTitle:       seoMetaTitle,
 		SeoMetaDescription: seoMetaDescription,
 		Status:             status,

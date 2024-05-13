@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func NewSeo(name string, table string, column string) string {
+func NewSlug(name string, table string, column string) string {
 	words := strings.Split(name, "-")
 	lastWord := words[len(words)-1]
 
@@ -25,7 +25,7 @@ func NewSeo(name string, table string, column string) string {
 
 	if IsExistInDB(table, column, seo) {
 		seo = name + "-" + strconv.Itoa(slugCount+1)
-		return NewSeo(seo, table, column)
+		return NewSlug(seo, table, column)
 	}
 
 	return seo

@@ -90,10 +90,17 @@ func UpdateCategory(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No category found with ID", "data": nil})
 	}
 
+	if category.Name != input.Name {
+		if helper.IsExistInDB("categories", "name", input.Name) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Category already exist", "data": nil})
+		}
+
+		category.SeoUrl = helper.NewSlug(input.Name, "categories", "seo_url")
+	}
+
 	category.Name = input.Name
 	category.Description = input.Description
 	category.Parent = input.Parent
-	category.SeoUrl = input.SeoUrl
 	category.SeoMetaTitle = input.SeoMetaTitle
 	category.SeoMetaDescription = input.SeoMetaDescription
 	category.Searchable = input.Searchable

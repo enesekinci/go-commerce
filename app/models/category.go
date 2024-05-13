@@ -24,7 +24,7 @@ func NewCategory(name string, description string, parent uint, seoMetaTitle stri
 		Name:               name,
 		Description:        description,
 		Parent:             parent,
-		SeoUrl:             helper.NewSeo(name, "categories", "seo_url"),
+		SeoUrl:             helper.NewSlug(name, "categories", "seo_url"),
 		SeoMetaTitle:       seoMetaTitle,
 		SeoMetaDescription: seoMetaDescription,
 		Searchable:         searchable,
