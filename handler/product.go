@@ -60,7 +60,7 @@ func CreateProduct(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
 	}
 
-	if helper.IsExistInDB("products", "name", input.Name) {
+	if database.IsExistInDB("products", "name", input.Name) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Product already exist", "data": nil})
 	}
 

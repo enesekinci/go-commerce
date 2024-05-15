@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/gofiber/fiber/v2"
 	"go-commerce/app/models"
-	"go-commerce/core/helper"
 	"go-commerce/database"
 )
 
@@ -27,7 +26,7 @@ func CreateTag(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
 	}
 
-	if helper.IsExistInDB("tags", "name", input.Name) {
+	if database.IsExistInDB("tags", "name", input.Name) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Tag already exist", "data": nil})
 	}
 

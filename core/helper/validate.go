@@ -3,7 +3,6 @@ package helper
 import (
 	"github.com/go-playground/validator/v10"
 	"go-commerce/core/constant"
-	"go-commerce/database"
 	"net/mail"
 )
 
@@ -79,13 +78,4 @@ func ValidateStruct(inputStruct interface{}) interface{} {
 func IsEmail(email string) bool {
 	_, err := mail.ParseAddress(email)
 	return err == nil
-}
-
-func IsExistInDB(table string, column string, value string) bool {
-
-	var isExist int64
-
-	database.DB.Table(table).Where(column+" = ?", value).Limit(1).Count(&isExist)
-
-	return isExist > 0
 }

@@ -53,7 +53,13 @@ func CreateBrand(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
 	}
 
-	brand := models.NewBrand(input.Name, input.Description, input.SeoMetaTitle, input.SeoMetaDescription, input.Status, input.Logo, input.Banner)
+	slug := helper.NewSlug(input.Name)
+
+	for !database.IsExistInDB("brands", "seo_url", slug) {
+		slug = helper.IncrementSlug(slug)
+	}
+
+	brand := models.NewBrand(input.Name, input.Description, input.SeoMetaTitle, input.SeoMetaDescription, input.Status, input.Logo, input.Banner, slug)
 
 	database.DB.Create(&brand)
 
@@ -84,11 +90,15 @@ func UpdateBrand(c *fiber.Ctx) error {
 	}
 
 	if brand.Name != input.Name {
-		if helper.IsExistInDB("brands", "name", input.Name) {
+		if database.IsExistInDB("brands", "name", input.Name) {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Brand already exist", "data": nil})
 		}
 
-		brand.SeoUrl = helper.NewSlug(input.Name, "brands", "seo_url")
+		brand.SeoUrl = helper.NewSlug(input.Name)
+
+		for !database.IsExistInDB("brands", "seo_url", brand.SeoUrl) {
+			brand.SeoUrl = helper.IncrementSlug(brand.SeoUrl)
+		}
 	}
 
 	brand.Name = input.Name

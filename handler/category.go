@@ -57,11 +57,13 @@ func CreateCategory(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
 	}
 
-	if helper.IsExistInDB("categories", "name", input.Name) {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Category already exist", "data": nil})
+	slug := helper.NewSlug(input.Name)
+
+	for !database.IsExistInDB("brands", "seo_url", slug) {
+		slug = helper.IncrementSlug(slug)
 	}
 
-	category := models.NewCategory(input.Name, input.Description, input.Parent, input.SeoMetaTitle, input.SeoMetaDescription, input.Searchable, input.Status, input.Logo, input.Banner)
+	category := models.NewCategory(input.Name, input.Description, input.Parent, input.SeoMetaTitle, input.SeoMetaDescription, input.Searchable, input.Status, input.Logo, input.Banner, slug)
 
 	database.DB.Create(&category)
 
@@ -91,11 +93,12 @@ func UpdateCategory(c *fiber.Ctx) error {
 	}
 
 	if category.Name != input.Name {
-		if helper.IsExistInDB("categories", "name", input.Name) {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Category already exist", "data": nil})
-		}
 
-		category.SeoUrl = helper.NewSlug(input.Name, "categories", "seo_url")
+		category.SeoUrl = helper.NewSlug(input.Name)
+
+		for !database.IsExistInDB("categories", "seo_url", category.SeoUrl) {
+			category.SeoUrl = helper.IncrementSlug(category.SeoUrl)
+		}
 	}
 
 	category.Name = input.Name

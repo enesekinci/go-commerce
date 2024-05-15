@@ -1,7 +1,6 @@
 package models
 
 import (
-	"go-commerce/core/helper"
 	"gorm.io/gorm"
 )
 
@@ -17,12 +16,11 @@ type Brand struct {
 	Banner             string `validate:"nullable" json:"banner"`
 }
 
-func NewBrand(name, description, seoMetaTitle, seoMetaDescription string, status uint, logo, banner string) Brand {
-
+func NewBrand(name, description, seoMetaTitle, seoMetaDescription string, status uint, logo, banner string, slug string) Brand {
 	return Brand{
 		Name:               name,
 		Description:        description,
-		SeoUrl:             helper.NewSlug(name, "brands", "seo_url"),
+		SeoUrl:             slug,
 		SeoMetaTitle:       seoMetaTitle,
 		SeoMetaDescription: seoMetaDescription,
 		Status:             status,

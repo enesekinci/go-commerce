@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func NewSlug(name string, table string, column string) string {
+func IncrementSlug(name string) string {
 	words := strings.Split(name, "-")
 	lastWord := words[len(words)-1]
 
@@ -21,12 +21,9 @@ func NewSlug(name string, table string, column string) string {
 		slugCount = count
 	}
 
-	seo := slug.Make(name) + strconv.Itoa(slugCount)
+	return name + "-" + strconv.Itoa(slugCount+1)
+}
 
-	if IsExistInDB(table, column, seo) {
-		seo = name + "-" + strconv.Itoa(slugCount+1)
-		return NewSlug(seo, table, column)
-	}
-
-	return seo
+func NewSlug(name string) string {
+	return slug.Make(name)
 }
