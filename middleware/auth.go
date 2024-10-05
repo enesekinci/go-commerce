@@ -29,10 +29,10 @@ func jwtError(c *fiber.Ctx, err error) error {
 	println(err.Error())
 	if err.Error() == "Missing or malformed JWT" {
 		return c.Status(fiber.StatusBadRequest).
-			JSON(fiber.Map{"status": "error", "message": "Missing or malformed JWT", "data": nil})
+			JSON(fiber.Map{"status": false, "message": "Missing or malformed JWT", "data": nil})
 	}
 	return c.Status(fiber.StatusUnauthorized).
-		JSON(fiber.Map{"status": "error", "message": "Invalid or expired JWT", "data": nil})
+		JSON(fiber.Map{"status": false, "message": "Invalid or expired JWT", "data": nil})
 }
 
 func IsAdmin(c *fiber.Ctx) error {
@@ -57,7 +57,7 @@ func IsAdmin(c *fiber.Ctx) error {
 	}
 
 	if !isExist {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Unauthorized", "data": nil})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": false, "message": "Unauthorized", "data": nil})
 	}
 
 	return c.Next()

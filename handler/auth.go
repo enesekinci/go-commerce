@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"go-commerce/app/models"
+	"go-commerce/app/resource"
 	"go-commerce/config"
 	"go-commerce/core/constant"
 	"go-commerce/core/helper"
@@ -41,19 +42,19 @@ func RefreshToken(c *fiber.Ctx) error {
 
 	type LoginInput struct {
 		Email    string `validate:"required,email" json:"email"`
-		Password string `validate:"required,min=6,alpha" json:"password"`
+		Password string `validate:"required,min=6,alphanum" json:"password"`
 	}
 
 	input := new(LoginInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	email := input.Email
@@ -63,11 +64,11 @@ func RefreshToken(c *fiber.Ctx) error {
 	user, err = getUserByEmail(email)
 
 	if user == nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "User not found", "errors": map[string]interface{}{"user": constant.NotFound}})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": false, "message": "User not found", "errors": map[string]interface{}{"user": constant.NotFound}})
 	}
 
 	if !helper.CheckPasswordHash(password, user.Password) {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid password"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": false, "message": "Invalid password"})
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -86,7 +87,13 @@ func RefreshToken(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Success login", "refresh_token": t})
+	return c.JSON(fiber.Map{
+		"status":        true,
+		"message":       "Success login",
+		"refresh_token": t,
+		"exp":           claims["exp"],
+		"user":          resource.NewUserResource(user),
+	})
 }
 
 func AccessToken(c *fiber.Ctx) error {
@@ -99,13 +106,13 @@ func AccessToken(c *fiber.Ctx) error {
 	println("tokenClaims", tokenClaims)
 
 	if tokenClaims == nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Unauthorized"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": false, "message": "Unauthorized"})
 	}
 
 	user, err := getUserByEmail(tokenClaims["email"].(string))
 
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Unauthorized"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": false, "message": "Unauthorized"})
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -124,7 +131,12 @@ func AccessToken(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Success login", "access_token": t})
+	return c.JSON(fiber.Map{"status": true,
+		"message":      "Success login",
+		"access_token": t,
+		"exp":          claims["exp"],
+		"user":         resource.NewUserResource(user),
+	})
 }
 
 func Register(c *fiber.Ctx) error {
@@ -139,21 +151,21 @@ func Register(c *fiber.Ctx) error {
 	input := new(RegisterInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	if user, _ := getUserByEmail(input.Email); user.Email != "" {
-		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"status": "error", "message": "User already exists", "errors": map[string]interface{}{"email": constant.AlreadyTaken}})
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"status": false, "message": "User already exists", "errors": map[string]interface{}{"email": constant.AlreadyTaken}})
 	}
 
 	if user, _ := getUserByPhone(input.Phone); user.Phone != "" {
-		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"status": "error", "message": "User already exists", "errors": map[string]interface{}{"phone": constant.AlreadyTaken}})
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"status": false, "message": "User already exists", "errors": map[string]interface{}{"phone": constant.AlreadyTaken}})
 	}
 
 	user := models.NewUser(input.Name, input.Email, input.Phone, input.Password, 3, 1, nil)
@@ -162,7 +174,7 @@ func Register(c *fiber.Ctx) error {
 
 	println(result)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "User successfully created", "user": user})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": true, "message": "User successfully created", "user": user})
 }
 func ForgotPassword(c *fiber.Ctx) error {
 	type ForgotPasswordInput struct {
@@ -172,23 +184,23 @@ func ForgotPassword(c *fiber.Ctx) error {
 	input := new(ForgotPasswordInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	user, err := getUserByEmail(input.Email)
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Internal server error"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Internal server error"})
 	}
 
 	if user == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "User not found"})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "User not found"})
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -215,7 +227,7 @@ func ForgotPassword(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Success create forgot password token"})
+	return c.JSON(fiber.Map{"status": true, "message": "Success create forgot password token"})
 }
 func ChangePassword(c *fiber.Ctx) error {
 	type ChangePasswordInput struct {
@@ -226,13 +238,13 @@ func ChangePassword(c *fiber.Ctx) error {
 	input := new(ChangePasswordInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	token := helper.GetToken(c)
@@ -240,28 +252,28 @@ func ChangePassword(c *fiber.Ctx) error {
 	claims, err := helper.GetTokenClaims(token, false)
 
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Unauthorized"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": false, "message": "Unauthorized"})
 	}
 
 	user, err := getUserByEmail(claims["email"].(string))
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Internal server error"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Internal server error"})
 	}
 
 	if user == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "User not found"})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "User not found"})
 	}
 
 	if !helper.CheckPasswordHash(input.CurrentPassword, user.Password) {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid password"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": false, "message": "Invalid password"})
 	}
 
 	user.Password = helper.HashPassword(input.Password)
 
 	database.DB.Save(&user)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Success change password"})
+	return c.JSON(fiber.Map{"status": true, "message": "Success change password"})
 }
 func UpdateProfile(c *fiber.Ctx) error {
 	type UpdateProfileInput struct {
@@ -272,13 +284,13 @@ func UpdateProfile(c *fiber.Ctx) error {
 	input := new(UpdateProfileInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	token := helper.GetToken(c)
@@ -286,17 +298,17 @@ func UpdateProfile(c *fiber.Ctx) error {
 	claims, err := helper.GetTokenClaims(token, false)
 
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Unauthorized"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": false, "message": "Unauthorized"})
 	}
 
 	user, err := getUserByEmail(claims["email"].(string))
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Internal server error"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Internal server error"})
 	}
 
 	if user == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "User not found"})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "User not found"})
 	}
 
 	user.Name = input.Name
@@ -304,5 +316,5 @@ func UpdateProfile(c *fiber.Ctx) error {
 
 	database.DB.Save(&user)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Success update profile", "user": user})
+	return c.JSON(fiber.Map{"status": true, "message": "Success update profile", "user": user})
 }

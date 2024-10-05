@@ -24,7 +24,7 @@ func GetVariantTypes(c *fiber.Ctx) error {
 
 	database.DB.Find(&variantTypes)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Variant types found", "variant_types": variantTypes})
+	return c.JSON(fiber.Map{"status": true, "message": "Variant types found", "variant_types": variantTypes})
 }
 
 func GetVariants(c *fiber.Ctx) error {
@@ -32,7 +32,7 @@ func GetVariants(c *fiber.Ctx) error {
 
 	database.DB.Preload("VariantType").Find(&variants)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Variants found", "variants": variants})
+	return c.JSON(fiber.Map{"status": true, "message": "Variants found", "variants": variants})
 }
 
 /*func GetVariant(c *fiber.Ctx) error {
@@ -44,23 +44,23 @@ func GetVariants(c *fiber.Ctx) error {
 	database.DB.Find(&variant, id)
 
 	if variant.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No variant found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No variant found with ID", "data": nil})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Variant found", "variant": variant})
+	return c.JSON(fiber.Map{"status": true, "message": "Variant found", "variant": variant})
 }*/
 
 func CreateVariant(c *fiber.Ctx) error {
 	input := new(CreateVariantInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	var variant models.Variant
@@ -70,7 +70,7 @@ func CreateVariant(c *fiber.Ctx) error {
 
 	database.DB.Create(&variant)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Variant created", "variant": variant})
+	return c.JSON(fiber.Map{"status": true, "message": "Variant created", "variant": variant})
 }
 
 func UpdateVariant(c *fiber.Ctx) error {
@@ -78,13 +78,13 @@ func UpdateVariant(c *fiber.Ctx) error {
 
 	input := new(CreateVariantInput)
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	var variant models.Variant
@@ -92,7 +92,7 @@ func UpdateVariant(c *fiber.Ctx) error {
 	database.DB.Find(&variant, id)
 
 	if variant.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No variant found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No variant found with ID", "data": nil})
 	}
 
 	variant.Name = input.Name
@@ -101,7 +101,7 @@ func UpdateVariant(c *fiber.Ctx) error {
 
 	database.DB.Save(&variant)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Variant updated", "variant": variant})
+	return c.JSON(fiber.Map{"status": true, "message": "Variant updated", "variant": variant})
 }
 
 func DeleteVariant(c *fiber.Ctx) error {
@@ -112,10 +112,10 @@ func DeleteVariant(c *fiber.Ctx) error {
 	database.DB.Find(&variant, id)
 
 	if variant.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No variant found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No variant found with ID", "data": nil})
 	}
 
 	database.DB.Delete(&variant)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Variant deleted", "variant": variant})
+	return c.JSON(fiber.Map{"status": true, "message": "Variant deleted", "variant": variant})
 }

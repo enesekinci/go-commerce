@@ -1,35 +1,33 @@
 package models
 
-import "gorm.io/gorm"
-
 type Tax struct {
-	gorm.Model
+	BaseModel
 
 	Name string  `gorm:"not null;unique" json:"name"`
 	Rate float64 `gorm:"default:0" json:"rate"`
 }
 
 type TaxClass struct {
-	gorm.Model
+	BaseModel
 }
 
 // sistemin genel kullanacagı modeller burada yer alacak.
 
 type Setting struct {
-	gorm.Model
+	BaseModel
 	Key   string `gorm:"not null;unique" json:"name"`
 	Value string `gorm:"type:text;nullable" json:"value"`
 }
 
 type Media struct {
-	gorm.Model
+	BaseModel
 	Name string `gorm:"not null" json:"name"`
 	Path string `gorm:"not null" json:"path"`
 	Type string `gorm:"not null" json:"type"`
 }
 
 type Language struct {
-	gorm.Model
+	BaseModel
 	Name      string `gorm:"not null;unique" json:"name"`
 	Code      string `gorm:"not null;unique" json:"code"`
 	Status    uint   `gorm:"default:1" json:"status"`
@@ -37,7 +35,7 @@ type Language struct {
 }
 
 type Currency struct {
-	gorm.Model
+	BaseModel
 	Name   string  `gorm:"not null;unique" json:"name"`
 	Code   string  `gorm:"not null;unique" json:"code"`
 	Symbol string  `gorm:"not null" json:"symbol"`
@@ -46,14 +44,14 @@ type Currency struct {
 }
 
 type Country struct {
-	gorm.Model
+	BaseModel
 	Name   string `gorm:"not null;unique" json:"name"`
 	Code   string `gorm:"not null;unique" json:"code"`
 	Status uint   `gorm:"default:1" json:"status"`
 }
 
 type Zone struct {
-	gorm.Model
+	BaseModel
 	Name      string `gorm:"not null;unique" json:"name"`
 	Code      string `gorm:"not null;unique" json:"code"`
 	Country   Country
@@ -62,13 +60,13 @@ type Zone struct {
 }
 
 type PaymentMethod struct {
-	gorm.Model
+	BaseModel
 	Name   string `gorm:"not null;unique" json:"name"`
 	Status uint   `gorm:"default:1" json:"status"`
 }
 
 type ShippingMethod struct {
-	gorm.Model
+	BaseModel
 	Name   string `gorm:"not null;unique" json:"name"`
 	Status uint   `gorm:"default:1" json:"status"`
 }

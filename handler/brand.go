@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"go-commerce/app/models"
 	"go-commerce/core/helper"
@@ -19,10 +20,31 @@ type CreateBrandInput struct {
 
 func GetBrands(c *fiber.Ctx) error {
 	var brands []models.Brand
+	var total int64
 
-	database.DB.Find(&brands)
+	page, perPage := helper.GetPaginateParams(c)
+	search, searchField := helper.GetSearchParams(c)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Categories found", "brands": brands})
+	query := database.DB.Model(&models.Brand{})
+
+	if search != "" {
+		query = query.Where(fmt.Sprintf("%s LIKE ?", searchField), "%"+search+"%")
+	}
+
+	query.Count(&total)
+
+	query = query.Limit(helper.StringToInt(perPage)).Offset((helper.StringToInt(page) - 1) * helper.StringToInt(perPage))
+
+	query.Find(&brands)
+
+	return c.JSON(fiber.Map{
+		"status":   true,
+		"message":  "Brands found",
+		"brands":   brands,
+		"page":     page,
+		"per_page": perPage,
+		"total":    total,
+	})
 }
 
 func GetBrand(c *fiber.Ctx) error {
@@ -34,23 +56,23 @@ func GetBrand(c *fiber.Ctx) error {
 	database.DB.Find(&brand, id)
 
 	if brand.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No category found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No brand found with ID", "data": nil})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Category found", "brand": brand})
+	return c.JSON(fiber.Map{"status": true, "message": "Brand found", "brand": brand})
 }
 
 func CreateBrand(c *fiber.Ctx) error {
 	input := new(CreateBrandInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	slug := helper.NewSlug(input.Name)
@@ -63,7 +85,7 @@ func CreateBrand(c *fiber.Ctx) error {
 
 	database.DB.Create(&brand)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Brand created", "brand": brand})
+	return c.JSON(fiber.Map{"status": true, "message": "Brand created", "brand": brand})
 }
 
 func UpdateBrand(c *fiber.Ctx) error {
@@ -74,24 +96,24 @@ func UpdateBrand(c *fiber.Ctx) error {
 	database.DB.Find(&brand, id)
 
 	if brand.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No category found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No brand found with ID", "data": nil})
 	}
 
 	input := new(CreateBrandInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	if brand.Name != input.Name {
 		if database.IsExistInDB("brands", "name", input.Name) {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Brand already exist", "data": nil})
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Brand already exist", "data": nil})
 		}
 
 		brand.SeoUrl = helper.NewSlug(input.Name)
@@ -111,7 +133,7 @@ func UpdateBrand(c *fiber.Ctx) error {
 
 	database.DB.Save(&brand)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Brand updated", "brand": brand})
+	return c.JSON(fiber.Map{"status": true, "message": "Brand updated", "brand": brand})
 }
 
 func DeleteBrand(c *fiber.Ctx) error {
@@ -122,10 +144,10 @@ func DeleteBrand(c *fiber.Ctx) error {
 	database.DB.Find(&brand, id)
 
 	if brand.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No category found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No brand found with ID", "data": nil})
 	}
 
 	database.DB.Delete(&brand)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Brand deleted", "brand": brand})
+	return c.JSON(fiber.Map{"status": true, "message": "Brand deleted", "brand": brand})
 }

@@ -74,7 +74,7 @@ func categoryRoutes(api fiber.Router) {
 }
 
 func brandRoutes(api fiber.Router) {
-	brand := api.Group("/brand")
+	brand := api.Group("/brands")
 	brand.Get("/", handler.GetBrands)
 	brand.Get("/:id", handler.GetBrand)
 	brand.Post("/create", middleware.VerifyAccessToken(), handler.CreateBrand)

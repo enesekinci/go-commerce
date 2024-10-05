@@ -1,11 +1,7 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
-
 type Category struct {
-	gorm.Model
+	BaseModel
 	Name               string `gorm:"not null;unique" json:"name"`
 	Description        string `gorm:"nullable" json:"description"`
 	Parent             uint   `gorm:"default:0" json:"parent"`

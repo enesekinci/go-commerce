@@ -26,7 +26,7 @@ func GetCategories(c *fiber.Ctx) error {
 
 	database.DB.Find(&categories)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Categories found", "categories": categories})
+	return c.JSON(fiber.Map{"status": true, "message": "Categories found", "categories": categories})
 }
 
 func GetCategory(c *fiber.Ctx) error {
@@ -38,23 +38,23 @@ func GetCategory(c *fiber.Ctx) error {
 	database.DB.Find(&category, id)
 
 	if category.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No category found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No category found with ID", "data": nil})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Category found", "category": resource.NewCategoryResource(category)})
+	return c.JSON(fiber.Map{"status": true, "message": "Category found", "category": resource.NewCategoryResource(category)})
 }
 
 func CreateCategory(c *fiber.Ctx) error {
 	input := new(CreateCategoryInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	slug := helper.NewSlug(input.Name)
@@ -67,7 +67,7 @@ func CreateCategory(c *fiber.Ctx) error {
 
 	database.DB.Create(&category)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Category created", "category": category})
+	return c.JSON(fiber.Map{"status": true, "message": "Category created", "category": category})
 }
 
 func UpdateCategory(c *fiber.Ctx) error {
@@ -75,13 +75,13 @@ func UpdateCategory(c *fiber.Ctx) error {
 
 	input := new(CreateCategoryInput)
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	var category models.Category
@@ -89,7 +89,7 @@ func UpdateCategory(c *fiber.Ctx) error {
 	database.DB.Find(&category, id)
 
 	if category.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No category found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No category found with ID", "data": nil})
 	}
 
 	if category.Name != input.Name {
@@ -113,7 +113,7 @@ func UpdateCategory(c *fiber.Ctx) error {
 
 	database.DB.Save(&category)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Category updated", "category": category})
+	return c.JSON(fiber.Map{"status": true, "message": "Category updated", "category": category})
 }
 
 func DeleteCategory(c *fiber.Ctx) error {
@@ -124,10 +124,10 @@ func DeleteCategory(c *fiber.Ctx) error {
 	database.DB.Find(&category, id)
 
 	if category.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No category found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No category found with ID", "data": nil})
 	}
 
 	database.DB.Delete(&category)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Category deleted", "data": nil})
+	return c.JSON(fiber.Map{"status": true, "message": "Category deleted", "data": nil})
 }

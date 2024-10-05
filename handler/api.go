@@ -10,5 +10,5 @@ func Hello(c *fiber.Ctx) error {
 
 	fmt.Println("Hello")
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Hello i'm ok!", "data": nil})
+	return c.JSON(fiber.Map{"status": true, "message": "Hello i'm ok!", "data": nil})
 }

@@ -1,11 +1,7 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
-
 type Brand struct {
-	gorm.Model
+	BaseModel
 	Name               string `validate:"required;unique" json:"name"`
 	Description        string `validate:"nullable" json:"description"`
 	SeoUrl             string `validate:"nullable" json:"seo_url"`

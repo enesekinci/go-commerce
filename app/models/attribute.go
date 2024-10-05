@@ -6,7 +6,7 @@ import (
 )
 
 type Attribute struct {
-	gorm.Model
+	BaseModel
 	Name       string         `gorm:"not null" json:"name"`
 	Filterable uint           `gorm:"default:0" json:"filterable"`
 	Values     datatypes.JSON `gorm:"type:json" json:"values"`
@@ -14,7 +14,7 @@ type Attribute struct {
 }
 
 type AttributeCategory struct {
-	gorm.Model
+	BaseModel
 	AttributeID uint `json:"attribute_id"`
 	CategoryID  uint `json:"category_id"`
 

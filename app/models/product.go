@@ -1,41 +1,40 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
 )
 
 type ProductCategory struct {
-	gorm.Model
+	BaseModel
 	ProductID  uint `json:"product_id"`
 	CategoryID uint `json:"category_id"`
 }
 
 type ProductAttribute struct {
-	gorm.Model
+	BaseModel
 	ProductID uint `json:"product_id"`
 }
 
 type ProductVariant struct {
-	gorm.Model
+	BaseModel
 	ProductID uint `json:"product_id"`
 	VariantID uint `json:"variant_id"`
 }
 
 type ProductTag struct {
-	gorm.Model
+	BaseModel
 	ProductID uint `json:"product_id"`
 	TagID     uint `json:"tag_id"`
 }
 
 type ProductMedia struct {
-	gorm.Model
+	BaseModel
 	ProductID uint `json:"product_id"`
 	MediaID   uint `json:"media_id"`
 }
 
 type Product struct {
-	gorm.Model
+	BaseModel
 	Name                  string    `gorm:"not null" json:"name"`
 	ShortDescription      string    `gorm:"type:text;nullable" json:"short_description"`
 	Description           string    `gorm:"type:text;nullable" json:"description"`

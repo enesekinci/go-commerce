@@ -45,23 +45,23 @@ func GetProducts(c *fiber.Ctx) error {
 
 	database.DB.Find(&products)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Products found", "products": products})
+	return c.JSON(fiber.Map{"status": true, "message": "Products found", "products": products})
 }
 func CreateProduct(c *fiber.Ctx) error {
 	input := new(CreateProductInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	if database.IsExistInDB("products", "name", input.Name) {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Product already exist", "data": nil})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Product already exist", "data": nil})
 	}
 
 	product := models.Product{
@@ -87,7 +87,7 @@ func CreateProduct(c *fiber.Ctx) error {
 
 	database.DB.Create(&product)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Product created", "product": product})
+	return c.JSON(fiber.Map{"status": true, "message": "Product created", "product": product})
 }
 func GetProduct(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -97,10 +97,10 @@ func GetProduct(c *fiber.Ctx) error {
 	database.DB.Find(&product, id)
 
 	if product.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No product found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No product found with ID", "data": nil})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Product found", "product": product})
+	return c.JSON(fiber.Map{"status": true, "message": "Product found", "product": product})
 }
 func UpdateProduct(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -108,13 +108,13 @@ func UpdateProduct(c *fiber.Ctx) error {
 	input := new(CreateProductInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	result := helper.ValidateStruct(input)
 
 	if result != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Review your request", "errors": result})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": false, "message": "Review your request", "errors": result})
 	}
 
 	var product models.Product
@@ -122,7 +122,7 @@ func UpdateProduct(c *fiber.Ctx) error {
 	database.DB.Find(&product, id)
 
 	if product.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No product found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No product found with ID", "data": nil})
 
 	}
 
@@ -147,7 +147,7 @@ func UpdateProduct(c *fiber.Ctx) error {
 
 	database.DB.Save(&product)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Product updated", "product": product})
+	return c.JSON(fiber.Map{"status": true, "message": "Product updated", "product": product})
 }
 func DeleteProduct(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -157,10 +157,10 @@ func DeleteProduct(c *fiber.Ctx) error {
 	database.DB.Find(&product, id)
 
 	if product.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No product found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No product found with ID", "data": nil})
 	}
 
 	database.DB.Delete(&product)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Product deleted", "product": product})
+	return c.JSON(fiber.Map{"status": true, "message": "Product deleted", "product": product})
 }

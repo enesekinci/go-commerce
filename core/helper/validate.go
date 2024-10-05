@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"go-commerce/core/constant"
 	"net/mail"
@@ -17,6 +18,8 @@ var TagToErrorCode = map[string]constant.ErrorCode{
 	"boolean":  constant.BOOLEAN,
 	"number":   constant.NUMBER,
 	"numeric":  constant.NUMERIC,
+	"alpha":    constant.Alpha,
+	"alphanum": constant.AlphaNumeric,
 }
 
 func Validate() *validator.Validate {
@@ -68,6 +71,8 @@ func ValidateStruct(inputStruct interface{}) interface{} {
 
 	if err != nil {
 		errors := PrepareErrorMessages(err, inputStruct)
+
+		fmt.Println("errors", errors)
 
 		return errors
 	}

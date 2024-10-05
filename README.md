@@ -19,7 +19,7 @@
 
 ```json
 {
-  "status": "success",
+  "status": true,
   "message": "Success Message",
   "user": {
     "id": 1,
@@ -34,7 +34,7 @@
 
 ```json
 {
-  "status": "error",
+  "status": false,
   "message": "Error Message",
   "error": {
     "code": 400

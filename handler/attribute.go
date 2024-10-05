@@ -18,14 +18,14 @@ func GetAttributes(c *fiber.Ctx) error {
 
 	database.DB.Find(&attributes).Preload("Categories")
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Attributes found", "attributes": attributes})
+	return c.JSON(fiber.Map{"status": true, "message": "Attributes found", "attributes": attributes})
 }
 
 func CreateAttribute(c *fiber.Ctx) error {
 	input := new(CreateAttributeInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	attribute := models.NewAttribute(input.Name, input.Filterable, input.Values)
@@ -42,20 +42,20 @@ func CreateAttribute(c *fiber.Ctx) error {
 				err := database.DB.Model(&attribute).Association("Categories").Append(&category)
 
 				if err != nil {
-					return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Failed to append category", "error": err})
+					return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Failed to append category", "error": err})
 				}
 			}
 		}
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Attribute created", "attribute": attribute})
+	return c.JSON(fiber.Map{"status": true, "message": "Attribute created", "attribute": attribute})
 }
 
 func UpdateAttribute(c *fiber.Ctx) error {
 	input := new(CreateAttributeInput)
 
 	if err := c.BodyParser(input); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Review your request", "error": err})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Review your request", "error": err})
 	}
 
 	id := c.Params("id")
@@ -65,7 +65,7 @@ func UpdateAttribute(c *fiber.Ctx) error {
 	database.DB.First(&attribute, id)
 
 	if attribute.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No attribute found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No attribute found with ID", "data": nil})
 	}
 
 	attribute.Name = input.Name
@@ -77,7 +77,7 @@ func UpdateAttribute(c *fiber.Ctx) error {
 	if len(input.Categories) > 0 {
 		err := database.DB.Model(&attribute).Association("Categories").Clear()
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Failed to clear categories", "error": err})
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Failed to clear categories", "error": err})
 		}
 
 		for _, categoryID := range input.Categories {
@@ -89,13 +89,13 @@ func UpdateAttribute(c *fiber.Ctx) error {
 				err := database.DB.Model(&attribute).Association("Categories").Append(&category)
 
 				if err != nil {
-					return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "Failed to append category", "error": err})
+					return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": false, "message": "Failed to append category", "error": err})
 				}
 			}
 		}
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Attribute updated", "attribute": attribute})
+	return c.JSON(fiber.Map{"status": true, "message": "Attribute updated", "attribute": attribute})
 }
 
 func DeleteAttribute(c *fiber.Ctx) error {
@@ -106,10 +106,10 @@ func DeleteAttribute(c *fiber.Ctx) error {
 	database.DB.First(&attribute, id)
 
 	if attribute.Name == "" {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "error", "message": "No attribute found with ID", "data": nil})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": false, "message": "No attribute found with ID", "data": nil})
 	}
 
 	database.DB.Delete(&attribute)
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Attribute deleted", "attribute": attribute})
+	return c.JSON(fiber.Map{"status": true, "message": "Attribute deleted", "attribute": attribute})
 }

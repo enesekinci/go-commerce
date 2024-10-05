@@ -2,17 +2,16 @@ package models
 
 import (
 	"gorm.io/datatypes"
-	"gorm.io/gorm"
 )
 
 type VariantType struct {
-	gorm.Model
+	BaseModel
 
 	Name string `gorm:"unique;not null" json:"name"`
 }
 
 type Variant struct {
-	gorm.Model
+	BaseModel
 
 	Name          string         `gorm:"unique;not null" json:"name"`
 	VariantTypeID uint           `json:"variant_type_id"`

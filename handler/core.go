@@ -8,13 +8,6 @@ import (
 
 func ErrorMessage(c *fiber.Ctx) error {
 
-	//var messages map[int]string
-
-	//for _, message := range constant.AllErrorCodes() {
-	//	code := int(message)
-	//	messages[code] = message.String()
-	//}
-
 	errorCodes := constant.AllErrorCodes()
 
 	errors := make(map[string]string)
